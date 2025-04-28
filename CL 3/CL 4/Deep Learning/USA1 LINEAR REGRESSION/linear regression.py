@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[13]:
 
 
 #Real estate agents want help to predict the house price for regions in the USA. He gave you the 
