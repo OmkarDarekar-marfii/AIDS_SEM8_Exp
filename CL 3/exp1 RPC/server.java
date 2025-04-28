@@ -3,9 +3,9 @@ import java.net.*;
 
 class server {
     public static void main(String[] args) throws Exception {
-       ServerSocket sersock = new ServerSocket(4000);
+        ServerSocket sersock = new ServerSocket(4000);
 
-        System.out.println("Server ready");
+        System.out.println("Server ready, waiting for client...");
 
         Socket sock = sersock.accept();
 
@@ -15,48 +15,33 @@ class server {
         InputStream istream = sock.getInputStream();
         BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
 
-        String fun;
-        int a, b, c;
+        String receiveMessage;
+        int num;
+        long fact;  // factorial can be a big number, so use long
 
         while (true) {
-            fun = receiveRead.readLine();
+            receiveMessage = receiveRead.readLine();
 
-            if (fun != null) {
-                System.out.println("Operation: " + fun);
+            if (receiveMessage == null) {
+                break;  // client disconnected
+            }
 
-                a = Integer.parseInt(receiveRead.readLine());
-                System.out.println("Parameter 1: " + a);
+            System.out.println("Received number: " + receiveMessage);
 
-                b = Integer.parseInt(receiveRead.readLine());
-                System.out.println("Parameter 2: " + b);
-
-                switch (fun) {
-                    case "add":
-                        c = a + b;
-                        pwrite.println("Addition = " + c);
-                        break;
-                    case "sub":
-                        c = a - b;
-                        pwrite.println("Subtraction = " + c);
-                        break;
-                    case "mul":
-                        c = a * b;
-                        pwrite.println("Multiplication = " + c);
-                        break;
-                    case "div":
-                        if (b != 0) {
-                            c = a / b;
-                            pwrite.println("Division = " + c);
-                        } else {
-                            pwrite.println("Error: Division by zero");
-                        }
-                        break;
-                    default:
-                        pwrite.println("Invalid operation");
+            try {
+                num = Integer.parseInt(receiveMessage);
+                fact = 1;
+                for (int i = 1; i <= num; i++) {
+                    fact *= i;
                 }
-
-                System.out.flush();
+                pwrite.println(fact);  // send result
+            } catch (NumberFormatException e) {
+                pwrite.println("Invalid input");
             }
         }
+
+        sock.close();
+        sersock.close();
+        System.out.println("Server exiting...");
     }
 }
